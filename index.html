@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Hyperparic</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="workbench.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <!-- Bleibt permanent oben sichtbar (sticky). Enthält nur den App-Namen
+       links und den "Neue Seite"-Button rechts. -->
+  <header class="app-header">
+    <span class="app-header__title">Hyperparic</span>
+    <button class="app-header__button" id="newPageBtn" type="button">
+      Neue Seite
+    </button>
+  </header>
+
+  <!-- ================= SPIELFELD ================= -->
+  <!-- Das Board besteht aus zwei Reihen:
+       1) gridRowMain  -> 4 große Raster (2 Spalten x 3 Reihen) nebeneinander
+       2) gridRowExtra -> 1 kleines Zusatzraster (2 Spalten x 1 Reihe)
+       Die Raster selbst werden dynamisch per JavaScript erzeugt
+       (siehe script.js -> initBoard), um den Code DRY und leicht
+       erweiterbar zu halten. -->
+  <main class="board" id="board" aria-label="Hyperparic Spielfeld">
+    <section class="grid-row" id="gridRowMain"></section>
+    <section class="grid-row grid-row--extra" id="gridRowExtra"></section>
+  </main>
+
+  <!-- ================= WERKBANK ================= -->
+  <!-- Kreativer Bereich ohne Bezug zum Zahlen-Spiel oben: ein digitales
+       Zeichenbrett mit Lineal, Winkelmesser und Zirkel (verschieb- und
+       drehbar, der Zirkel zeichnet echte Kreise), sowie frei platzierbare
+       HUD-Notizkarten. Siehe workbench.js für die komplette Logik. -->
+  <section class="workbench" id="workbench" aria-label="Werkbank">
+    <div class="workbench__surface" id="workbenchSurface">
+      <!-- Zeichenfläche: hier landen die vom Zirkel gestempelten Kreise -->
+      <canvas id="workbenchCanvas" class="workbench__canvas"></canvas>
+      <!-- Ebene für die drei Werkzeuge (Lineal, Winkelmesser, Zirkel) -->
+      <div class="workbench__layer" id="toolLayer"></div>
+      <!-- Ebene für die frei platzierbaren Notizkarten -->
+      <div class="workbench__layer" id="cardLayer"></div>
+    </div>
+
+    <div class="workbench__toolbar">
+      <button class="workbench__toolbar-btn" id="addCardBtn" type="button">
+        + Notiz
+      </button>
+      <button class="workbench__toolbar-btn" id="clearCanvasBtn" type="button">
+        Fläche leeren
+      </button>
+    </div>
+  </section>
+
+  <script src="script.js" defer></script>
+  <script src="workbench.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+/* =====================================================================
+   Hyperparic – style.css
+   Minimalistisches HUD-Design für eine iOS-artige Web-App.
+   Erlaubte Farben: ausschließlich Weiß, Schwarz und Blau.
+   Kein Schatten, kein Verlauf – nur dünne Linien und klare Flächen.
+   ===================================================================== */
+
+/* --------------------------- Design-Tokens --------------------------- */
+:root {
+  /* Farben – nur 2 Farben + neutraler Hintergrund:
+     Weiß (Hintergrund), Schwarz und ein dunkles Tintenblau
+     (wie Kugelschreibertinte). */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-ink: #1b3b6f; /* dunkelblau, wie Kugelschreiber-Tinte */
+
+  /* Layout-Maße */
+  --header-height: 52px;
+  --line-thin: 1px;
+  --border-outer: 1.5px;
+
+  /* HUD-Eckmarkierungen */
+  --corner-size: 8px;
+  --corner-inset: 3px;
+  --corner-thickness: 1.5px;
+
+  /* Abstände */
+  --gap-grid-row: 6px;
+  --gap-field: 1px;
+  --board-padding-x: 10px;
+  --board-padding-y: 14px;
+
+  /* Sonstiges */
+  --radius-button: 8px;
+  --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ----------------------------- Reset ---------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--color-white);
+  color: var(--color-black);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ============================= HEADER ================================= */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: var(--header-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--color-white);
+  border-bottom: var(--line-thin) solid var(--color-black);
+}
+
+.app-header__title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--color-black);
+}
+
+.app-header__button {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: var(--color-white);
+  border: var(--line-thin) solid var(--color-ink);
+  border-radius: var(--radius-button);
+  padding: 6px 14px;
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
+}
+
+.app-header__button:active {
+  opacity: 0.5;
+  transform: scale(0.96);
+}
+
+/* ============================= BOARD =================================== */
+.board {
+  flex: 0 0 auto; /* Board nimmt nur so viel Platz wie nötig ein und
+                     bleibt oben; darunter füllt die Werkbank den Rest */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: var(--board-padding-y) var(--board-padding-x) 0;
+  overflow: hidden; /* verhindert jegliches horizontales Scrollen */
+}
+
+/* Eine Reihe von Rastern (entweder die 4 Hauptraster oder das Zusatzraster) */
+.grid-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--gap-grid-row);
+  width: 100%;
+}
+
+.grid-row--extra {
+  margin-top: 4px;
+}
+
+/* ============================= RASTER =================================== */
+/* Großes Raster: schwarzer Hintergrund + weiße Felder mit 1px Abstand
+   erzeugt die schwarzen Rasterlinien, ohne doppelte Ränder zu riskieren. */
+.grid {
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: var(--gap-field);
+  background: var(--color-black);
+  border: var(--border-outer) solid var(--color-ink);
+}
+
+/* Zusatzraster unten: 1 Reihe x 8 Spalten, genauso breit wie die Reihe
+   der 4 Hauptraster darüber. Bewusst rein schwarz gehalten (kein Tintenblau),
+   keine Eckmarkierungen (werden bereits beim Erzeugen in script.js
+   weggelassen). */
+.grid--extra {
+  flex: 1 1 100%;
+  max-width: none;
+  border-color: var(--color-black);
+}
+
+/* ============================= FELD ===================================== */
+.field {
+  position: relative;
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.field__value {
+  font-size: clamp(18px, 6.2vw, 28px);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-black);
+  pointer-events: none;
+}
+
+/* Sehr kleine, weiche Tipp-Animation (iOS-artig) */
+@keyframes fieldPulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.field--pulse {
+  animation: fieldPulse 180ms ease-out;
+}
+
+/* ------------------------ HUD-Eckmarkierungen -------------------------- */
+/* Kleine, rechtwinklige "L"-Markierungen an allen vier Ecken jedes Feldes,
+   wie bei technischen Zeichnungen / HUD-Interfaces. */
+.field__corner {
+  position: absolute;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  pointer-events: none;
+}
+
+.field__corner--tl {
+  top: var(--corner-inset);
+  left: var(--corner-inset);
+  border-top: var(--corner-thickness) solid var(--color-ink);
+  border-left: var(--corner-thickness) solid var(--color-ink);
+}
+
+.field__corner--tr {
+  top: var(--corner-inset);
+  right: var(--corner-inset);
+  border-top: var(--corner-thickness) solid var(--color-ink);
+  border-right: var(--corner-thickness) solid var(--color-ink);
+}
+
+.field__corner--bl {
+  bottom: var(--corner-inset);
+  left: var(--corner-inset);
+  border-bottom: var(--corner-thickness) solid var(--color-ink);
+  border-left: var(--corner-thickness) solid var(--color-ink);
+}
+
+.field__corner--br {
+  bottom: var(--corner-inset);
+  right: var(--corner-inset);
+  border-bottom: var(--corner-thickness) solid var(--color-ink);
+  border-right: var(--corner-thickness) solid var(--color-ink);
+}
+
+/* ===================== Anpassung für kleinere iPhones =================== */
+@media (max-width: 360px) {
+  :root {
+    --corner-size: 6px;
+    --corner-inset: 2px;
+    --gap-grid-row: 4px;
+    --board-padding-x: 6px;
+  }
+
+  .field__value {
+    font-size: clamp(15px, 6vw, 20px);
+  }
+}
+
+/* ===================== Reduzierte Bewegung respektieren ================= */
+@media (prefers-reduced-motion: reduce) {
+  .field--pulse,
+  .app-header__button {
+    animation: none !important;
+    transition: none !important;
+  }
+}
